@@ -15,7 +15,7 @@
 
 #define EOF_TOK 48
 #define URT 48  
-#define ACTIONTABLE printf(">>Action Table [27, 47] = %c, %d\n",Action_Table[27][47].Kind,Action_Table[27][47].Kind);
+//#define ACTIONTABLE printf(">>Action Table [27, 47] = %c, %d\n",Action_Table[27][47].Kind,Action_Table[27][47].Kind);
 // URT hw1 에서 추가
 
 typedef struct tkt	//하나의 토큰을 나타내는 구조체
@@ -270,9 +270,7 @@ int main()
 	printGotoGraph(States_And_Arcs);
 	//goto table 에러남 지금
 	Make_Action_Table();
-	ACTIONTABLE
 	print_Action_Table();
-	ACTIONTABLE
 	Make_Goto_Table();
 	print_Goto_Table();
 
@@ -320,7 +318,7 @@ sym get_next_token(FILE* fps)
 
 /////////////////////////hw1에서 가져온것 . lexan을 위한 함수들///////////////
 
-//민제 : 필요없어보임
+//민제 : 필요없어보임 
 //char keywords[16][50] = { "if", "else" ,"while","do","for", "include","define", "typedef","struct","int","char","float","double","void","return" , "case" };
 
 int iswhitespace(char c)
@@ -1348,8 +1346,6 @@ void Make_Action_Table()
 	while (state_cursor)
 	{
 		item_cursor = state_cursor->item_start;
-		if (state_cursor->id == 27)
-			printf("then");
 		///////////////p20 빈칸 O//////
 		while (item_cursor)
 		{
@@ -1371,7 +1367,6 @@ void Make_Action_Table()
 					{	//초기화로 비어 있는 셀이다. shift action을 넣어줌
 						Action_Table[state_cursor->id][symbol.no].Kind = 's';
 						Action_Table[state_cursor->id][symbol.no].num = to_state_id;
-						ACTIONTABLE
 						//////////p20 빈칸 //////////////
 					}
 					else		//무언가 이미 들어있음
@@ -1629,9 +1624,6 @@ Ty_Node_Ptr Parsing(FILE* fps)
 	do
 	{
 		State = Stack[Top]->state;
-		printf("____________________________________\n");
-		printf(" %s\t%d\t%d\n", NextToken.str, NextToken.kind, NextToken.no);
-		printf("[%2d, %2d]  Kind = %c, num = %2d\n",State, NextToken.no, Action_Table[State][NextToken.no].Kind, Action_Table[State][NextToken.no].num);
 		switch (Action_Table[State][NextToken.no].Kind)
 		{		///////////p28 빈칸 O///////////
 		case 's':

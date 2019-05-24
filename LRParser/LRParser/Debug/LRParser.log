@@ -1,1 +1,4 @@
-﻿  LRParser.vcxproj -> E:\git\LR_Parser\LRParser\Debug\LRParser.exe
+﻿  main.cpp
+e:\git\lr_parser\lrparser\lrparser\main.cpp(2044): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+e:\git\lr_parser\lrparser\lrparser\main.cpp(2083): warning C4018: '>=': signed 또는 unsigned가 일치하지 않습니다.
+  LRParser.vcxproj -> E:\git\LR_Parser\LRParser\Debug\LRParser.exe

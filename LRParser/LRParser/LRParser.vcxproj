@@ -125,6 +125,7 @@
     <Text Include="goto_graph.txt" />
     <Text Include="goto_table.txt" />
     <Text Include="Grammar_data.txt" />
+    <Text Include="output.txt" />
     <Text Include="source.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
