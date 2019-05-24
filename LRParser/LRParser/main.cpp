@@ -15,6 +15,7 @@
 
 #define EOF_TOK 48
 #define URT 48  
+#define ACTIONTABLE printf(">>Action Table [27, 47] = %c, %d\n",Action_Table[27][47].Kind,Action_Table[27][47].Kind);
 // URT hw1 에서 추가
 
 typedef struct tkt	//하나의 토큰을 나타내는 구조체
@@ -48,7 +49,7 @@ typedef struct typeitemnode
 } type_item;
 
 typedef struct statenode* state_node_ptr;
-typedef struct statenode
+typedef struct statenode//goto 그래프에서 사용
 {
 	int id;
 	int item_cnt;
@@ -64,7 +65,7 @@ typedef struct ssym
 } sym;
 //////////////애 순서 바꿈 밑에 sym 사용하기 때문에
 typedef struct itemnode* Arc_node_ptr;
-typedef struct itemnode
+typedef struct itemnode//Item list에서 사용
 {
 	int from_state;	//rule number
 	int to_state;	// point 
@@ -269,7 +270,9 @@ int main()
 	printGotoGraph(States_And_Arcs);
 	//goto table 에러남 지금
 	Make_Action_Table();
+	ACTIONTABLE
 	print_Action_Table();
+	ACTIONTABLE
 	Make_Goto_Table();
 	print_Goto_Table();
 
@@ -298,7 +301,7 @@ sym get_next_token(FILE* fps)
 	sym token;
 	tokentype a_tok;
 	a_tok = lexan(fps);   /////////////////////
-	token.kind = 0;
+	token.kind = 0; ////이거도 이상함
 
 	if (a_tok.kind == EOF_TOK)
 	{
@@ -378,19 +381,8 @@ tokentype lexan(FILE* fps)
 			c = fgetc(fps);  // fgetc can be called even if fp is after the end of file.
 							  // calling it again still returns EOF(-1) w/o invoking error.
 			if (iswhitespace(c)) state = 0;  // this is white space.
-			else if (isalpha(c))
-			{
-				buf[bp] = c;
-				bp++; buf[bp] = '\0';
-				state = 28;
-			}
-			else if (isdigit(c))
-			{
-				buf[bp] = c;
-				bp++; buf[bp] = '\0';
-				upper_n = c - '0';
-				state = 1;
-			}
+			else if (isalpha(c)){	buf[bp] = c;	bp++; buf[bp] = '\0';	state = 28;	}
+			else if (isdigit(c)){	buf[bp] = c;	bp++; buf[bp] = '\0';	upper_n = c - '0';	state = 1;	}
 			else if (c == '<') state = 2;
 			else if (c == '>') state = 32;
 			else if (c == '=') state = 35;
@@ -417,7 +409,6 @@ tokentype lexan(FILE* fps)
 			else if (c == '|') state = 68;
 			else if (c == '&') state = 5;
 			else if (c == EOF) state = 71;
-
 			else {
 				token.kind = URT; // 인식할 수 없는 토큰임을 나타냄.
 				return token;
@@ -459,7 +450,7 @@ tokentype lexan(FILE* fps)
 
 
 			// ******************************************************************************
-
+			
 		case 3: // 글자 + 가 나온 후의 처리를 담당하는 상태.
 			c = fgetc(fps);
 			if (c == '+') state = 47;
@@ -816,7 +807,8 @@ tokentype lexan(FILE* fps)
 			strcpy(token.str, "\"");
 			return token;
 		case 66:
-			token.kind = 27;		 strcpy(token.str, "'");
+			token.kind = 27;
+			strcpy(token.str, "'");
 			return token;
 
 		case 67:
@@ -1051,7 +1043,6 @@ void makeGotoGraph(ty_ptr_item_node IS_O)
 
 				To_item_list = GoTo(state_cursor->item_start, sym_temp);
 				////////////////////////p13 빈칸 O////////////////////////////
-
 				if (To_item_list)
 				{
 					To_state_node = Add_A_State_Node(State_Node_List_Header, To_item_list);
@@ -1192,7 +1183,7 @@ int is_same_two_itemlists(ty_ptr_item_node list1, ty_ptr_item_node list2)
 }
 
 //page 17
-state_node_ptr makeStateNode(void)
+state_node_ptr makeStateNode(void)//상태 노드 만들기
 {
 	state_node_ptr cursor;
 
@@ -1357,6 +1348,8 @@ void Make_Action_Table()
 	while (state_cursor)
 	{
 		item_cursor = state_cursor->item_start;
+		if (state_cursor->id == 27)
+			printf("then");
 		///////////////p20 빈칸 O//////
 		while (item_cursor)
 		{
@@ -1370,7 +1363,7 @@ void Make_Action_Table()
 
 					if (to_state_id == -1)	//to state가 없다. 이 경우는 실제로 일어날 수 없다.
 					{
-						printf("Logic error at Make_Action(1) \n");
+						printf("Logic error at Make_Action( 1 ) \n");
 						getchar();
 					}
 
@@ -1378,6 +1371,7 @@ void Make_Action_Table()
 					{	//초기화로 비어 있는 셀이다. shift action을 넣어줌
 						Action_Table[state_cursor->id][symbol.no].Kind = 's';
 						Action_Table[state_cursor->id][symbol.no].num = to_state_id;
+						ACTIONTABLE
 						//////////p20 빈칸 //////////////
 					}
 					else		//무언가 이미 들어있음
@@ -1454,7 +1448,7 @@ void print_Action_Table(void)
 	FILE* file_ptr = NULL;
 
 	file_ptr = fopen("action_table.txt", "w");
-	fprintf(file_ptr, "		\t");
+	fprintf(file_ptr, "\t");
 
 	for (i = 0; i < MaxTerminal; i++)
 		fprintf(file_ptr, "%2s\t", Terminals_list[i].str);
@@ -1628,12 +1622,16 @@ Ty_Node_Ptr Parsing(FILE* fps)
 	sym NextToken;
 	Ty_Node_Ptr Root, NewNode, TempNode;
 
+
 	push_state(Stack, 0);
 	NextToken = get_next_token(fps);
 
 	do
 	{
 		State = Stack[Top]->state;
+		printf("____________________________________\n");
+		printf(" %s\t%d\t%d\n", NextToken.str, NextToken.kind, NextToken.no);
+		printf("[%2d, %2d]  Kind = %c, num = %2d\n",State, NextToken.no, Action_Table[State][NextToken.no].Kind, Action_Table[State][NextToken.no].num);
 		switch (Action_Table[State][NextToken.no].Kind)
 		{		///////////p28 빈칸 O///////////
 		case 's':
@@ -1644,7 +1642,7 @@ Ty_Node_Ptr Parsing(FILE* fps)
 			NewNode->children[0] = NULL;
 
 			push_symbol(Stack, NewNode);
-
+			
 			TempState = Action_Table[State][NextToken.no].num;
 			push_state(Stack, TempState);
 			NextToken = get_next_token(fps);
@@ -1732,7 +1730,7 @@ void print_parse_tree(FILE* fout, Ty_Node_Ptr curr, int standard, int first, int
 	}
 
 	return;
-}	//void print_pa0rse_tree
+}	//void print_parse_tree
 
 
 

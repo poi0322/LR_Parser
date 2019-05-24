@@ -26,5 +26,14 @@
     <Text Include="source.txt">
       <Filter>리소스 파일</Filter>
     </Text>
+    <Text Include="goto_graph.txt">
+      <Filter>리소스 파일</Filter>
+    </Text>
+    <Text Include="goto_table.txt">
+      <Filter>리소스 파일</Filter>
+    </Text>
+    <Text Include="action_table.txt">
+      <Filter>리소스 파일</Filter>
+    </Text>
   </ItemGroup>
 </Project>
