@@ -1936,7 +1936,7 @@ int lookUp_terminal(char* str)
 	return -1;
 }
 
-void read_grammar(char* filename)
+void read_grammar(const char* filename)
 {
 	FILE* fp;
 	char line[500];

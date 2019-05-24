@@ -23,5 +23,8 @@
     <Text Include="Grammar_data.txt">
       <Filter>리소스 파일</Filter>
     </Text>
+    <Text Include="source.txt">
+      <Filter>리소스 파일</Filter>
+    </Text>
   </ItemGroup>
 </Project>
